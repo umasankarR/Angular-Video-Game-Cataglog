@@ -15,7 +15,6 @@
     </div>
   }
 
-  <!-- Error Alert -->
   @if (error) {
     <div class="alert alert-danger" role="alert">
       {{ error }}
@@ -23,7 +22,6 @@
     </div>
   }
 
-  <!-- Video Games Grid -->
   @if (loaded && !loading && !error) {
     @if (videoGames.length === 0) {
       <div class="text-center py-5">
