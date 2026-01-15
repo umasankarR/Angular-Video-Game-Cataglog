@@ -1,0 +1,27 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <i class="bi bi-controller fs-4 me-2"></i>
+      <span class="fw-bold">GameVault</span>
+    </a>
+    <div class="d-flex align-items-center">
+      <div class="dropdown">
+        <button class="btn btn-link text-light p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+            <i class="bi bi-person-fill fs-5"></i>
+          </div>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+          <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <router-outlet />
+</main>

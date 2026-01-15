@@ -1,0 +1,26 @@
+.form-label {
+  font-weight: 500;
+}
+
+.card {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.card-header {
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 1.25rem;
+}
+
+.toast {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+
+  &.show {
+    opacity: 1;
+  }
+}
+
+.toast-container {
+  z-index: 1100;
+}

@@ -1,0 +1,248 @@
+<!-- Success Toast -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+  <div
+    class="toast align-items-center text-bg-success border-0"
+    [class.show]="showToast"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        {{ successMessage }}
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">{{ isEditMode ? 'Edit Video Game' : 'Add New Video Game' }}</h4>
+            <a routerLink="/games" class="btn btn-outline-secondary btn-sm">
+              <i class="bi bi-arrow-left"></i> Back to Catalogue
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <!-- Loading Spinner -->
+          @if (loading) {
+            <div class="d-flex justify-content-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          }
+
+          <!-- Error Alert -->
+          @if (error && !loading) {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              {{ error }}
+              <button type="button" class="btn-close" (click)="error = null"></button>
+            </div>
+          }
+
+
+          <!-- Form -->
+          @if (!loading) {
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <!-- Title -->
+                <div class="col-12 mb-3">
+                  <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    id="title"
+                    class="form-control"
+                    formControlName="title"
+                    [class.is-invalid]="isFieldInvalid('title')"
+                    placeholder="Enter game title">
+                  @if (isFieldInvalid('title')) {
+                    <div class="invalid-feedback">{{ getFieldError('title') }}</div>
+                  }
+                </div>
+
+                <!-- Publisher & Developer -->
+                <div class="col-md-6 mb-3">
+                  <label for="publisher" class="form-label">Publisher <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    id="publisher"
+                    class="form-control"
+                    formControlName="publisher"
+                    [class.is-invalid]="isFieldInvalid('publisher')"
+                    placeholder="Enter publisher">
+                  @if (isFieldInvalid('publisher')) {
+                    <div class="invalid-feedback">{{ getFieldError('publisher') }}</div>
+                  }
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="developer" class="form-label">Developer <span class="text-danger">*</span></label>
+                  <input
+                    type="text"
+                    id="developer"
+                    class="form-control"
+                    formControlName="developer"
+                    [class.is-invalid]="isFieldInvalid('developer')"
+                    placeholder="Enter developer">
+                  @if (isFieldInvalid('developer')) {
+                    <div class="invalid-feedback">{{ getFieldError('developer') }}</div>
+                  }
+                </div>
+
+                <!-- Release Date & Genre -->
+                <div class="col-md-6 mb-3">
+                  <label for="releaseDate" class="form-label">Release Date <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <input
+                      class="form-control"
+                      placeholder="yyyy-mm-dd"
+                      formControlName="releaseDate"
+                      ngbDatepicker
+                      #dp="ngbDatepicker"
+                      [class.is-invalid]="isFieldInvalid('releaseDate')">
+                    <button class="btn btn-outline-secondary" type="button" (click)="dp.toggle()">
+                      <i class="bi bi-calendar"></i>
+                    </button>
+                  </div>
+                  @if (isFieldInvalid('releaseDate')) {
+                    <div class="text-danger small mt-1">Release date is required</div>
+                  }
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="genre" class="form-label">Genre <span class="text-danger">*</span></label>
+                  <select
+                    id="genre"
+                    class="form-select"
+                    formControlName="genre"
+                    [class.is-invalid]="isFieldInvalid('genre')">
+                    @for (genre of genres; track genre.value) {
+                      <option [ngValue]="genre.value">{{ genre.label }}</option>
+                    }
+                  </select>
+                  @if (isFieldInvalid('genre')) {
+                    <div class="invalid-feedback">{{ getFieldError('genre') }}</div>
+                  }
+                </div>
+
+                <!-- Price & Rating -->
+                <div class="col-md-6 mb-3">
+                  <label for="price" class="form-label">Price ($) <span class="text-danger">*</span></label>
+                  <input
+                    type="number"
+                    id="price"
+                    class="form-control"
+                    formControlName="price"
+                    [class.is-invalid]="isFieldInvalid('price')"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00">
+                  @if (isFieldInvalid('price')) {
+                    <div class="invalid-feedback">{{ getFieldError('price') }}</div>
+                  }
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="rating" class="form-label">Rating (0-100) <span class="text-danger">*</span></label>
+                  <input
+                    type="number"
+                    id="rating"
+                    class="form-control"
+                    formControlName="rating"
+                    [class.is-invalid]="isFieldInvalid('rating')"
+                    min="0"
+                    max="100"
+                    placeholder="0">
+                  @if (isFieldInvalid('rating')) {
+                    <div class="invalid-feedback">{{ getFieldError('rating') }}</div>
+                  }
+                </div>
+
+                <!-- Cover Image URL -->
+                <div class="col-12 mb-3">
+                  <label for="coverImageUrl" class="form-label">Cover Image URL</label>
+                  <input
+                    type="url"
+                    id="coverImageUrl"
+                    class="form-control"
+                    formControlName="coverImageUrl"
+                    [class.is-invalid]="isFieldInvalid('coverImageUrl')"
+                    placeholder="https://example.com/image.jpg">
+                  @if (isFieldInvalid('coverImageUrl')) {
+                    <div class="invalid-feedback">{{ getFieldError('coverImageUrl') }}</div>
+                  }
+                </div>
+
+                <!-- Description -->
+                <div class="col-12 mb-3">
+                  <label for="description" class="form-label">Description</label>
+                  <textarea
+                    id="description"
+                    class="form-control"
+                    formControlName="description"
+                    [class.is-invalid]="isFieldInvalid('description')"
+                    rows="4"
+                    placeholder="Enter game description"></textarea>
+                  @if (isFieldInvalid('description')) {
+                    <div class="invalid-feedback">{{ getFieldError('description') }}</div>
+                  }
+                </div>
+
+                <!-- Is Active (only in edit mode) -->
+                @if (isEditMode) {
+                  <div class="col-12 mb-3">
+                    <div class="form-check">
+                      <input
+                        type="checkbox"
+                        id="isActive"
+                        class="form-check-input"
+                        formControlName="isActive">
+                      <label class="form-check-label" for="isActive">Active</label>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-flex justify-content-between pt-3 border-top">
+                <div>
+                  @if (isEditMode) {
+                    <button
+                      type="button"
+                      class="btn btn-danger"
+                      (click)="onDelete()"
+                      [disabled]="deleting">
+                      @if (deleting) {
+                        <span class="spinner-border spinner-border-sm me-1"></span>
+                      }
+                      <i class="bi bi-trash"></i> Delete
+                    </button>
+                  }
+                </div>
+                <div>
+                  <a routerLink="/games" class="btn btn-outline-secondary me-2">Cancel</a>
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    [disabled]="saving || form.invalid">
+                    @if (saving) {
+                      <span class="spinner-border spinner-border-sm me-1"></span>
+                    }
+                    {{ isEditMode ? 'Save Changes' : 'Create Game' }}
+                  </button>
+                </div>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

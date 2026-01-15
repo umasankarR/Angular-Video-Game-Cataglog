@@ -1,0 +1,95 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Video Game Catalogue</h1>
+    <a routerLink="/games/new" class="btn btn-primary">
+      <i class="bi bi-plus-lg"></i> Add New Game
+    </a>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (loading) {
+    <div class="d-flex justify-content-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Error Alert -->
+  @if (error) {
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+      <button type="button" class="btn btn-link" (click)="loadVideoGames()">Try Again</button>
+    </div>
+  }
+
+  <!-- Video Games Grid -->
+  @if (loaded && !loading && !error) {
+    @if (videoGames.length === 0) {
+      <div class="text-center py-5">
+        <h4 class="text-muted">No video games found</h4>
+        <p class="text-muted">Add your first video game to get started!</p>
+        <a routerLink="/games/new" class="btn btn-primary">Add New Game</a>
+      </div>
+    } @else {
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        @for (game of videoGames; track game.id) {
+          <div class="col">
+            <div class="card h-100 game-card">
+              <div class="position-relative">
+                @if (game.coverImageUrl) {
+                  <img [src]="game.coverImageUrl" class="card-img-top" [alt]="game.title" style="height: 200px; object-fit: cover;">
+                } @else {
+                  <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="bi bi-controller text-white" style="font-size: 4rem;"></i>
+                  </div>
+                }
+                <!-- Edit Button Overlay -->
+                <a [routerLink]="['/games', game.id, 'edit']" class="btn btn-primary btn-sm edit-btn position-absolute" title="Edit">
+                  <i class="bi bi-pencil-fill"></i>
+                </a>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title text-truncate" [title]="game.title">{{ game.title }}</h5>
+                <p class="card-text text-muted small mb-2">{{ game.developer }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="badge" [ngClass]="getGenreBadgeClass(game.genre)">{{ game.genreName }}</span>
+                  <span class="fw-bold text-primary">{{ formatPrice(game.price) }}</span>
+                </div>
+              </div>
+              <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                  <small class="text-muted">{{ formatDate(game.releaseDate) }}</small>
+                  <div>
+                    @for (star of [1,2,3,4,5]; track star) {
+                      <i class="bi" [ngClass]="star <= game.rating / 20 ? 'bi-star-fill text-warning' : 'bi-star text-muted'"></i>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (totalCount > pageSize) {
+        <div class="d-flex justify-content-center mt-4">
+          <ngb-pagination
+            [collectionSize]="totalCount"
+            [(page)]="pageNumber"
+            [pageSize]="pageSize"
+            [maxSize]="5"
+            [rotate]="true"
+            [boundaryLinks]="true"
+            (pageChange)="onPageChange($event)">
+          </ngb-pagination>
+        </div>
+      }
+
+      <div class="text-center mt-3 text-muted">
+        Showing {{ (pageNumber - 1) * pageSize + 1 }} - {{ Math.min(pageNumber * pageSize, totalCount) }} of {{ totalCount }} games
+      </div>
+    }
+  }
+</div>
